@@ -1,9 +1,9 @@
 
 import { signIn } from "@/app/auth"
  
-export default function SignIn() {
+export  function SignIn() {
   return (
-    <form
+    <form 
       action={async () => {
         "use server"
         await signIn("slack")

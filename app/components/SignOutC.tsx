@@ -1,5 +1,5 @@
 import { signOut } from "@/app/auth"
- 
+import { Button } from "@/components/ui/button"
 export function SignOut() {
   return (
     <form

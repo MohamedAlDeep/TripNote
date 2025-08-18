@@ -21,7 +21,8 @@ export default async function Home() {
   return (
     <div >
       <h1 className="text-4xl">TripNote</h1>
-      
+      <h1>{session?.user?.name}</h1>
+      <h1>{session?.user?.email}</h1>
       <img src={session?.user?.image ?? './moch.png'} alt="User Avatar" />
     </div>
   );

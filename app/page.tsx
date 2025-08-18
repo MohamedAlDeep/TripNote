@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from '@/app/auth'
 import { log } from "console";
 import { SignOut } from "./components/SignOutC";
+import { Navbar } from "./components/Navigation/Navbar";
 
 export default async function Home() {
   const session = await auth()
@@ -14,13 +15,18 @@ export default async function Home() {
   if(logged == false){
     return (
       <div>
-        <SignIn/>
+        <Navbar/>
+        <div className="grid place-items-center space-y-6 mt-12">
+          <img className="h-35 w-150" src="Text Content Title.svg" alt="" />
+          <SignIn/>
+        </div>
       </div>
     )
   }
   console.log(session?.user)
   return (
     <div >
+      <Navbar/>
       <h1 className="text-4xl">TripNote</h1>
       <h1>{session?.user?.name}</h1>
       <h1>{session?.user?.email}</h1>

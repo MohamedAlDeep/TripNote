@@ -1,6 +1,7 @@
 
 import { signIn } from "@/app/auth"
- 
+import { Button } from "@/components/ui/button"
+
 export  function SignIn() {
   return (
     <form 
@@ -9,7 +10,9 @@ export  function SignIn() {
         await signIn("slack")
       }}
     >
-      <button type="submit">Signin with Slack</button>
+      <Button className="bg-blue-800" type="submit">
+        <img className="h-7 w-7" src="./brand-slack - iconSvg.co.svg" alt="" />
+        Login with Slack</Button>
     </form>
   )
 } 

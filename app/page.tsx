@@ -3,6 +3,7 @@ import {SignIn} from '@/app/components/SignInC'
 import { redirect } from "next/navigation";
 import { auth } from '@/app/auth'
 import { log } from "console";
+import { SignOut } from "./components/SignOutC";
 
 export default async function Home() {
   const session = await auth()
@@ -24,6 +25,8 @@ export default async function Home() {
       <h1>{session?.user?.name}</h1>
       <h1>{session?.user?.email}</h1>
       <img src={session?.user?.image ?? './moch.png'} alt="User Avatar" />
+
+      <SignOut/>
     </div>
   );
 }

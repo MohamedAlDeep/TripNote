@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())  // Primary key, auto increment
+  email     String   @unique                        // Unique email
+  name      String   // User's name
+  createdAt DateTime @default(now())                // Automatically set to current time on creation
+  notes     Note[]   // One-to-many relationship with the Note model
+}
+
+model Note {
+  id          Int      @id @default(autoincrement())  // Primary key, auto increment
+  title       String   // Title of the note
+  content     String?  // Content of the note (optional)
+  location    String?  // Location related to the note (optional)
+  destination String?  // Destination related to the note (optional)
+  date        DateTime // Date associated with the note
+  createdAt   DateTime @default(now())               // Created timestamp
+  updatedAt   DateTime @updatedAt                    // Auto-updated on any change
+  authorId    Int     // Foreign key to User model
+  author      User    @relation(fields: [authorId], references: [id])  // Relation to User
+}

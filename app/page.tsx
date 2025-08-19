@@ -20,7 +20,7 @@ export default async function Home() {
         <div className="grid place-items-center space-y-6 mt-12">
           <img className="h-35 w-150" src="Text Content Title.svg" alt="" />
           <SignIn/>
-          <InsertNote/>
+         
         </div>
       </div>
     )

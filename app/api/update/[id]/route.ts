@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function PUT(request: Request, context: { params: { id: string } }) {
-    const id = Number(context.params.id);
+export async function PUT(request: Request) {
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
     const data = await request.json();
-    console.log(data);
     const updatedNote = await prisma.note.update({
-        where: { id },
+        where: { id: Number(id) },
         data,
     });
     return NextResponse.json(updatedNote);

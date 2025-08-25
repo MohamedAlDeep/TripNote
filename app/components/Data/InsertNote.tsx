@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import Cookies from 'js-cookie';
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Autour_One } from "next/font/google"
 import { Input } from "@/components/ui/input"
@@ -14,10 +15,14 @@ import {
 } from "@/components/ui/popover"
 import { da } from "date-fns/locale"
 
+type InsertNoteProps = {
+    startProp: {lat: number; lng: number};
+    destinationProp: {lat: number; lng: number};
+};
 
-
-export function InsertNote(){
-       // const title = 'test'
+export function InsertNote({startProp, destinationProp}: InsertNoteProps){
+    const authorIdCookie = Cookies.get("author") 
+    // const title = 'test'
     // const content = 'test'
     // const location = 'test'
     // const destination = 'test123'
@@ -31,9 +36,18 @@ export function InsertNote(){
     const [location, setLocation ] = useState('')
     const [destination, setDestination ] = useState('')
     const [authorID, setAuthorID ] = useState(0)
+    setAuthorID(Number(authorIdCookie))
     // const [date, setDate] = useState<Date | undefined>(undefined)
     const [ message, setMessage] = useState('')
-
+    useEffect(() => {
+        if (startProp) {
+            setLocation(JSON.stringify(startProp));
+    }
+        if(destinationProp){
+            setDestination(JSON.stringify(destinationProp))
+    }
+    })
+    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setMessage('')
@@ -105,7 +119,7 @@ export function InsertNote(){
                 <Input type="number"
                 className="w-52 px-1"
                 value={authorID}
-                onChange={e => setAuthorID(parseInt(e.target.value))}
+                disabled
                 />
 
                 {/* <label>Date</label>
@@ -144,7 +158,7 @@ export function InsertNote(){
                     </Popover>
                 </div>
 
-                <Button className="w-52 mt-5" type='submit'> 
+                <Button className="w-52 mt-5 bg-blue-800" type='submit'> 
                     Add Note
                 </Button>
             </form>

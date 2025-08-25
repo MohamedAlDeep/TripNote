@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function PUT(request:Request, {params}: {params: {id: string}}) {
-    const id = await Number(params.id)
-    const data = await request.json()
-    console.log(data)
+export async function PUT(request: Request, context: { params: { id: string } }) {
+    const id = Number(context.params.id);
+    const data = await request.json();
+    console.log(data);
     const updatedNote = await prisma.note.update({
-        where: {id},
+        where: { id },
         data,
-    })
-    return NextResponse.json(updatedNote)
+    });
+    return NextResponse.json(updatedNote);
 }

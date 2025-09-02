@@ -6,7 +6,7 @@ import { auth } from '@/app/auth'
 
 export default async function Page({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     const session = await auth()
-    const { tab, source, destination } = await searchParams;
+    const { tab, source, destination } = searchParams;
     
     // Convert tab to boolean (e.g., "true" or "false" string to boolean)
     const tabBool: boolean = tab === 'true';

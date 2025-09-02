@@ -2,15 +2,15 @@ import { Navbar } from "../components/Navigation/Navbar";
 import "leaflet/dist/leaflet.css";
 import MapClient from "./MapClient";
 import { auth } from '@/app/auth'
+import { use } from 'react'
 
-
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+ 
+export default async function Page(props: {
+  searchParams: SearchParams
+}) {    
     const session = await auth()
-    const { tab, source, destination } = searchParams;
+    const { tab, source, destination } = use(props.searchParams);
     
     // Convert tab to boolean (e.g., "true" or "false" string to boolean)
     const tabBool: boolean = tab === 'true';

@@ -4,11 +4,11 @@ import MapClient from "./MapClient";
 import { auth } from '@/app/auth'
 
 
-type PageProps = {
+export default async function Page({
+  searchParams,
+}: {
   searchParams: { [key: string]: string | string[] | undefined }
-};
-
-export default async function Page({ searchParams }: PageProps) {
+}) {
     const session = await auth()
     const { tab, source, destination } = searchParams;
     

@@ -9,14 +9,15 @@ const nextConfig: NextConfig = {
   // Force all pages to be server-side rendered to avoid build-time DB queries
   reactStrictMode: true,
   
-  // Add specific Vercel configuration
-  output: "standalone",
+  // Skip analysis of API routes during build
+  skipMiddlewareUrlNormalize: true,
+  skipTrailingSlashRedirect: true,
   
-  // Configure webpack for better compatibility
+  // Avoid analyzing Next.js API routes at build time
   webpack: (config, { isServer }) => {
     if (isServer) {
-      // Prevent specific server-side only modules from being bundled
-      config.externals = [...(config.externals || []), 'bcrypt'];
+      // Avoid loading @prisma/client during build
+      config.externals = [...(config.externals || []), '@prisma/client', 'bcrypt'];
     }
     return config;
   },

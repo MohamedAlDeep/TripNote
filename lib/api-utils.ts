@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server';
 
+// Check if we're in build time
+export const isBuildTime = () => {
+  return process.env.NEXT_PHASE === 'phase-production-build';
+};
+
 // Helper to safely handle API routes that use Prisma
 export function createSafeApiHandler<T>(
   handler: (request: Request) => Promise<Response>
 ): (request: Request) => Promise<Response> {
   return async (request: Request) => {
     // Always skip DB operations during build time
-    if (process.env.NEXT_PHASE === 'phase-production-build') {
+    if (isBuildTime()) {
       console.log('Build-time API call detected, returning mock response');
       return NextResponse.json({ success: true, mock: true });
     }

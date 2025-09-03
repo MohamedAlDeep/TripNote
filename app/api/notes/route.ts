@@ -1,30 +1,37 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from '@/lib/prisma'
+import { NextResponse } from "next/server";
+import { createSafeApiHandler } from '@/lib/api-utils';
 
-// Remove NoteType and use Prisma's type directly, or construct the object inline
-// type NoteType = {
-//     title: string,
-//     content: string,
-//     location: string,
-//     destination: string,
-//     authorId?: number,
-//     date?: Date
-// }
-
+// Force dynamic rendering
 export const dynamic = 'force-dynamic';
 
-export async function POST(request: Request){
-    const data = await request.json();
-    // Build the note data object, only including fields if they are defined
-    const noteData: any = {
-        title: data.title,
-        content: data.content,
-        location: data.location,
-        destination: data.destination,
-    };
-    if (data.authorID) noteData.authorId = Number(data.authorID);
-    if (data.date) noteData.date = new Date(data.date);
-
-    const note = await prisma.note.create({ data: noteData });
-    return NextResponse.json(note, { status: 201 });
+// GET handler for notes
+async function getNotesHandler(request: Request): Promise<Response> {
+  // Dynamic import to avoid build-time issues
+  const { default: prisma } = await import('@/lib/prisma');
+  
+  // Your existing code to get notes
+  const notes = await prisma.note.findMany();
+  return NextResponse.json(notes);
 }
+
+// POST handler for creating notes
+async function createNoteHandler(request: Request): Promise<Response> {
+  const { default: prisma } = await import('@/lib/prisma');
+  
+  try {
+    const body = await request.json();
+    const note = await prisma.note.create({
+      data: body
+    });
+    return NextResponse.json(note);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to create note", details: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
+
+// Export the wrapped handlers
+export const GET = createSafeApiHandler(getNotesHandler);
+export const POST = createSafeApiHandler(createNoteHandler);

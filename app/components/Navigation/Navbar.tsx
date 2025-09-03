@@ -1,6 +1,15 @@
+"use client";
 
+import { useState, useCallback } from 'react';
 
 export function Navbar(props: {logged: boolean}){
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const handleMenuClick = useCallback((e: any) => {
+        e.preventDefault();
+        setMenuOpen(prev => !prev);
+    }, []);
+    
     if(props.logged == true){
         return (
             <div  className="grid grid-cols-2 border-b border-b-blue-800/20">

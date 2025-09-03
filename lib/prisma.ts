@@ -5,6 +5,18 @@ const isBuildTime = () => {
   return process.env.NEXT_PHASE === 'phase-production-build';
 };
 
+// Create a mock handler that returns empty results for all Prisma methods
+const createMockPrismaModel = () => ({
+  findUnique: async () => ({}),
+  findFirst: async () => ({}),
+  findMany: async () => [],
+  create: async () => ({}),
+  update: async () => ({}),
+  delete: async () => ({}),
+  upsert: async () => ({}),
+  count: async () => 0,
+});
+
 // Only create PrismaClient if not in build time
 let prisma: any;
 
@@ -22,26 +34,20 @@ if (!isBuildTime()) {
     if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
   } catch (e) {
     console.warn('Failed to initialize Prisma client:', e);
-    // Provide a mock client
+    // Provide a comprehensive mock client
     prisma = {
-      note: {
-        findMany: async () => [],
-        create: async () => ({}),
-        delete: async () => ({}),
-        // Add more methods as needed
-      }
+      note: createMockPrismaModel(),
+      user: createMockPrismaModel(),
+      // Add any other models your app uses
     };
   }
 } else {
   // Mock client during build time
   console.warn('Using mock Prisma client during build');
   prisma = {
-    note: {
-      findMany: async () => [],
-      create: async () => ({}),
-      delete: async () => ({}),
-      // Add more methods as needed
-    }
+    note: createMockPrismaModel(),
+    user: createMockPrismaModel(),
+    // Add any other models your app uses
   };
 }
 

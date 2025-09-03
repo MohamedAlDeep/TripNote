@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 
-// These prevent static analysis during build
+// Prevent static analysis during build but don't use edge runtime
 export const dynamic = 'force-dynamic';
-export const runtime = 'edge'; // Optional: Use edge runtime
 
 export async function DELETE(request: Request): Promise<Response> {
   // Skip DB operations during build - CRUCIAL addition
@@ -12,7 +11,6 @@ export async function DELETE(request: Request): Promise<Response> {
   }
   
   try {
-    // Rest of your code...
     const url = new URL(request.url);
     const segments = url.pathname.split("/");
     const id = segments[segments.length - 1];

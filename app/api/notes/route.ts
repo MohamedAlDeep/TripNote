@@ -11,6 +11,8 @@ import prisma from '@/lib/prisma'
 //     date?: Date
 // }
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request){
     const data = await request.json();
     // Build the note data object, only including fields if they are defined

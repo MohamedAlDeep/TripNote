@@ -1,6 +1,6 @@
 "use client";
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvent } from "react-leaflet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 // @ts-ignore
 import L from "leaflet"; 
@@ -71,25 +71,56 @@ export default function MapComponent(props: MapComponentProps) {
   const [status, setStatus] = useState(0);
   const [addnote, setAddnote] = useState(false);
   const [tab, setTab] = useState('Add');
+  
+  // Use refs to track if we've already processed these props
+  const initializedRef = useRef(false);
 
+  // Initialize state from props only once
   useEffect(() => {
-    if (tabProp == true) {
+    if (!initializedRef.current) {
+      if (tabProp === true) {
+        setTab("View");
+      }
+      
+      if (sourceProp && (sourceProp.lat !== 0 || sourceProp.lng !== 0)) {
+        setSource(sourceProp);
+      }
+      
+      if (destinationProp && (destinationProp.lat !== 0 || destinationProp.lng !== 0)) {
+        setDestination(destinationProp);
+      }
+      
+      initializedRef.current = true;
+    }
+  }, [tabProp, sourceProp, destinationProp]);
+
+  // For subsequent prop changes, only update if values are meaningfully different
+  useEffect(() => {
+    if (initializedRef.current && tabProp === true && tab !== "View") {
       setTab("View");
     }
-  }, [tabProp]);
+  }, [tabProp, tab]);
 
   useEffect(() => {
-    if (sourceProp) {
+    if (initializedRef.current && 
+        sourceProp && 
+        (sourceProp.lat !== 0 || sourceProp.lng !== 0) && 
+        (!source || sourceProp.lat !== source.lat || sourceProp.lng !== source.lng)) {
       setSource(sourceProp);
     }
-  }, [sourceProp]);
+  }, [sourceProp, source]);
 
   useEffect(() => {
-    if (destinationProp) {
+    if (initializedRef.current && 
+        destinationProp && 
+        (destinationProp.lat !== 0 || destinationProp.lng !== 0) && 
+        (!destination || destinationProp.lat !== destination.lat || destinationProp.lng !== destination.lng)) {
       setDestination(destinationProp);
     }
-  }, [destinationProp]);
-  useEffect(()=> {
+  }, [destinationProp, destination]);
+
+  // Keep the geolocation effect as is
+  useEffect(() => {
     if('geolocation' in navigator){
       navigator.geolocation.getCurrentPosition(
         (position) => {

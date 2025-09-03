@@ -3,15 +3,19 @@ import "leaflet/dist/leaflet.css";
 import MapClient from "./MapClient";
 import { auth } from '@/app/auth'
 
-export default async function Page({
-  searchParams
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
+// Define the search params type as a Promise
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+export default async function Page(props: {
+  searchParams: SearchParams
 }) {    
     const session = await auth()
     
+    // Await the searchParams promise instead of using the 'use' hook
+    const searchParamsResolved = await props.searchParams
+    
     // Safely destructure search parameters
-    const { tab, source, destination } = searchParams;
+    const { tab, source, destination } = searchParamsResolved;
     
     // Convert tab to boolean (e.g., "true" or "false" string to boolean)
     const tabBool: boolean = tab === 'true';

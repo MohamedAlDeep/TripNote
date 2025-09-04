@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 
+// Use memo to prevent unnecessary re-renders
 export function Navbar(props: {logged: boolean}){
     const [menuOpen, setMenuOpen] = useState(false);
 
-    const handleMenuClick = useCallback((e: any) => {
-        e.preventDefault();
+    // Use useCallback for the click handler to maintain reference stability
+    const handleMenuClick = useCallback(() => {
         setMenuOpen(prev => !prev);
     }, []);
     

@@ -3,14 +3,21 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import L from "leaflet";
-import { Navbar } from "../components/Navigation/Navbar";
 import Map, { sourceIcon, destinationIcon, gpsIcon } from "./Map";
 import { InsertNote } from "../components/Data/InsertNote";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import "leaflet/dist/leaflet.css";
 
-const MapPage = () => {
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+const MapProvider = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -30,21 +37,19 @@ const MapPage = () => {
 
   // Get user's location
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const newLocation = new L.LatLng(
-            position.coords.latitude,
-            position.coords.longitude
-            );
-            setUserLocation(newLocation);
-            setMapCenter(newLocation);
-        },
-        () => {
-            console.error("Could not get user location.");
-        }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const newLocation = new L.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
         );
-    }
+        setUserLocation(newLocation);
+        setMapCenter(newLocation);
+      },
+      () => {
+        console.error("Could not get user location.");
+      }
+    );
   }, []);
 
   // Parse source and destination from URL for "view" tab
@@ -139,41 +144,38 @@ const MapPage = () => {
   };
 
   return (
-    <div>
-      <Navbar logged={true} />
-      <div className="p-4">
-        <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-          <TabsList>
-            <TabsTrigger value="add">Add Note</TabsTrigger>
-            <TabsTrigger value="view">View Note</TabsTrigger>
-          </TabsList>
-          <TabsContent value="add">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <p>1. Select start location: {source ? `✅ Set` : "❌ Not Set"}</p>
-                <p>2. Select destination: {destination ? `✅ Set` : "❌ Not Set"}</p>
-              </div>
-              {source && destination && !showInsertNote && (
-                <Button onClick={() => setShowInsertNote(true)}>Add Note Details</Button>
-              )}
-              <Button onClick={resetSelection} variant="outline">Reset Selection</Button>
-              {showInsertNote && source && destination && (
-                <InsertNote startProp={source} destinationProp={destination} />
-              )}
-              <Map
-                center={mapCenter}
-                markers={addMarkers}
-                onClick={handleMapClick}
-              />
+    <div className="p-4">
+      <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
+        <TabsList>
+          <TabsTrigger value="add">Add Note</TabsTrigger>
+          <TabsTrigger value="view">View Note</TabsTrigger>
+        </TabsList>
+        <TabsContent value="add">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-4">
+              <p>1. Select start location: {source ? `✅ Set` : "❌ Not Set"}</p>
+              <p>2. Select destination: {destination ? `✅ Set` : "❌ Not Set"}</p>
             </div>
-          </TabsContent>
-          <TabsContent value="view">
-            <Map center={mapCenter} markers={viewMarkers} />
-          </TabsContent>
-        </Tabs>
-      </div>
+            {source && destination && !showInsertNote && (
+              <Button onClick={() => setShowInsertNote(true)}>Add Note Details</Button>
+            )}
+            <Button onClick={resetSelection} variant="outline">Reset Selection</Button>
+            {showInsertNote && source && destination && (
+              <InsertNote startProp={source} destinationProp={destination} />
+            )}
+            <Map
+              center={mapCenter}
+              markers={addMarkers}
+              onClick={handleMapClick}
+            />
+          </div>
+        </TabsContent>
+        <TabsContent value="view">
+          <Map center={mapCenter} markers={viewMarkers} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
 
-export default MapPage;
+export default MapProvider;
